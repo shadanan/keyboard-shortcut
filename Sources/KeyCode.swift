@@ -13,54 +13,64 @@ import Carbon
 
 class KeyCode: NSObject {
     let keyCode: Int
-    let modifierFlags: NSEventModifierFlags
+    let shiftDown: Bool
+    let controlDown: Bool
+    let optionDown: Bool
+    let commandDown: Bool
     
-    init(keyCode: Int, modifierFlags: NSEventModifierFlags) {
+    init(keyCode: Int, shiftDown: Bool, controlDown: Bool, optionDown: Bool, commandDown: Bool) {
         self.keyCode = keyCode
-        self.modifierFlags = modifierFlags
+        self.shiftDown = shiftDown
+        self.controlDown = controlDown
+        self.optionDown = optionDown
+        self.commandDown = commandDown
     }
     
-    static func fromEvent(event: NSEvent) -> KeyCode {
-        return KeyCode(keyCode: Int(event.keyCode), modifierFlags: event.modifierFlags)
+    static func from(NSEvent event: NSEvent) -> KeyCode {
+        return KeyCode(keyCode: Int(event.keyCode),
+                       shiftDown: event.modifierFlags.contains(.shift),
+                       controlDown: event.modifierFlags.contains(.control),
+                       optionDown: event.modifierFlags.contains(.option),
+                       commandDown: event.modifierFlags.contains(.command))
+    }
+    
+    static func from(CGEvent event: CGEvent) -> KeyCode {
+        return KeyCode(keyCode: Int(event.getIntegerValueField(.keyboardEventKeycode)),
+                       shiftDown: event.flags.contains(.maskShift),
+                       controlDown: event.flags.contains(.maskControl),
+                       optionDown: event.flags.contains(.maskAlternate),
+                       commandDown: event.flags.contains(.maskCommand))
     }
     
     override var description: String {
-        return modifierFlagsString + keyCodeString
+        return modifiers + character
     }
     
-    var keyCodeString: String {
+    var character: String {
         return keyCodeToString(keyCode: keyCode)
     }
     
-    var modifierFlagsString: String {
-        return modifierFlagsToString(modifierFlags: modifierFlags)
+    var modifiers: String {
+        var result = ""
+        
+        if controlDown {
+            result.append("⌃")
+        }
+        
+        if optionDown {
+            result.append("⌥")
+        }
+        
+        if shiftDown {
+            result.append("⇧")
+        }
+        
+        if commandDown {
+            result.append("⌘")
+        }
+        
+        return result
     }
-}
-
-func keyEventToString(keyCode: Int, modifierFlags: NSEventModifierFlags) -> String {
-    return modifierFlagsToString(modifierFlags: modifierFlags) + keyCodeToString(keyCode: keyCode)
-}
-
-func modifierFlagsToString(modifierFlags: NSEventModifierFlags) -> String {
-    var result = ""
-    
-    if modifierFlags.contains(.control) {
-        result.append("⌃")
-    }
-    
-    if modifierFlags.contains(.option) {
-        result.append("⌥")
-    }
-    
-    if modifierFlags.contains(.shift) {
-        result.append("⇧")
-    }
-    
-    if modifierFlags.contains(.command) {
-        result.append("⌘")
-    }
-    
-    return result
 }
 
 func keyCodeToString(keyCode: Int) -> String {
