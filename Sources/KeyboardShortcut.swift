@@ -11,7 +11,7 @@
 import AppKit
 import Carbon
 
-class KeyCode: NSObject {
+class KeyboardShortcut: NSObject {
     let keyCode: Int
     let shiftDown: Bool
     let controlDown: Bool
@@ -26,20 +26,20 @@ class KeyCode: NSObject {
         self.commandDown = commandDown
     }
     
-    static func from(NSEvent event: NSEvent) -> KeyCode {
-        return KeyCode(keyCode: Int(event.keyCode),
-                       shiftDown: event.modifierFlags.contains(.shift),
-                       controlDown: event.modifierFlags.contains(.control),
-                       optionDown: event.modifierFlags.contains(.option),
-                       commandDown: event.modifierFlags.contains(.command))
+    static func from(NSEvent event: NSEvent) -> KeyboardShortcut {
+        return KeyboardShortcut(keyCode: Int(event.keyCode),
+                                shiftDown: event.modifierFlags.contains(.shift),
+                                controlDown: event.modifierFlags.contains(.control),
+                                optionDown: event.modifierFlags.contains(.option),
+                                commandDown: event.modifierFlags.contains(.command))
     }
     
-    static func from(CGEvent event: CGEvent) -> KeyCode {
-        return KeyCode(keyCode: Int(event.getIntegerValueField(.keyboardEventKeycode)),
-                       shiftDown: event.flags.contains(.maskShift),
-                       controlDown: event.flags.contains(.maskControl),
-                       optionDown: event.flags.contains(.maskAlternate),
-                       commandDown: event.flags.contains(.maskCommand))
+    static func from(CGEvent event: CGEvent) -> KeyboardShortcut {
+        return KeyboardShortcut(keyCode: Int(event.getIntegerValueField(.keyboardEventKeycode)),
+                                shiftDown: event.flags.contains(.maskShift),
+                                controlDown: event.flags.contains(.maskControl),
+                                optionDown: event.flags.contains(.maskAlternate),
+                                commandDown: event.flags.contains(.maskCommand))
     }
     
     override var description: String {
