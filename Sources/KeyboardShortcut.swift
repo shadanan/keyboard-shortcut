@@ -43,13 +43,35 @@ class KeyboardShortcut: NSObject {
     }
     
     override var description: String {
-        return modifiers + character
+        return modifiers + character.uppercased()
     }
     
     var character: String {
         return keyCodeToString(keyCode: keyCode)
     }
     
+    var keyEquivalentModifierMask: NSEventModifierFlags {
+        var result = NSEventModifierFlags()
+
+        if controlDown {
+            result.insert(.control)
+        }
+
+        if optionDown {
+            result.insert(.option)
+        }
+
+        if shiftDown {
+            result.insert(.shift)
+        }
+
+        if commandDown {
+            result.insert(.command)
+        }
+
+        return result
+    }
+
     var modifiers: String {
         var result = ""
         
@@ -144,7 +166,7 @@ func keyCodeToString(keyCode: Int) -> String {
             let error = UCKeyTranslate(layout, UInt16(keyCode), UInt16(kUCKeyActionDisplay), 0, UInt32(LMGetKbdType()), OptionBits(kUCKeyTranslateNoDeadKeysMask), &deadKeyState, chars.count, &length, &chars)
             
             if error == noErr && length > 0 {
-                return String(utf16CodeUnits: chars, count: 1).uppercased()
+                return String(utf16CodeUnits: chars, count: 1)
             }
         }
         
