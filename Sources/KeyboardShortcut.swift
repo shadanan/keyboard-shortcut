@@ -95,6 +95,14 @@ class KeyboardShortcut: NSObject {
     }
 }
 
+func ==(lhs: KeyboardShortcut, rhs: KeyboardShortcut) -> Bool {
+    return (lhs.keyCode == rhs.keyCode &&
+            lhs.shiftDown == rhs.shiftDown &&
+            lhs.controlDown == rhs.controlDown &&
+            lhs.optionDown == rhs.optionDown &&
+            lhs.commandDown == rhs.commandDown)
+}
+
 func keyCodeToString(keyCode: Int) -> String {
     switch keyCode {
     case kVK_F1: return "\u{F704}"
